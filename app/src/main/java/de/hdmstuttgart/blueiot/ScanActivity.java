@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
@@ -84,7 +85,7 @@ public class ScanActivity extends ListActivity {
                     isScanning = false;
                     bluetoothAdapter.stopLeScan(leScanCallback);
                 }
-            }, 10000);
+            }, 5000);
 
             isScanning = true;
             bluetoothAdapter.startLeScan(leScanCallback);
@@ -113,6 +114,7 @@ public class ScanActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         BluetoothDevice device = bleDeviceListAdapter.getDevice(position);
         if (device != null) {
+
             //TODO
             //Create Intent to start new Activity
             //Put extra information
@@ -130,7 +132,111 @@ public class ScanActivity extends ListActivity {
 
     private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicRead(gatt, characteristic, status);
+
+            Log.d("TAG", "onCharacteristicRead");
+        }
+
+        @Override
+        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicWrite(gatt, characteristic, status);
+
+            Log.d("TAG", "onCharacteristicWrite");
+        }
+
+        @Override
+        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+            //super.onCharacteristicChanged(gatt, characteristic);
+
+            //TODO
+            //REGEX
+
+            String value = characteristic.getStringValue(0);
+            Log.d("TAG", "onCharacteristicChanged - Value: " + value);
+
+            try {
+                String[] values = value.split(",");
+                if (values.length == 4) {
+                    int x = Integer.parseInt(values[0].trim());
+                    int y = Integer.parseInt(values[1].trim());
+                    int z = Integer.parseInt(values[2].trim());
+                    int height = Integer.parseInt(values[3].trim());
+
+                    Log.d("TAG", "X=" + x + " , Y=" + y + " , Z= " + z + " , Height=" + height);
+                }
+            } catch (Exception ex) {}
+        }
+
+        @Override
+        public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+            super.onDescriptorRead(gatt, descriptor, status);
+
+            Log.d("TAG", "onDescriptorRead");
+        }
+
+        @Override
+        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+            super.onDescriptorWrite(gatt, descriptor, status);
+
+            Log.d("TAG", "onDescriptorWrite Status: " + status);
+        }
+
+        @Override
+        public void onReliableWriteCompleted(BluetoothGatt gatt, int status) {
+            super.onReliableWriteCompleted(gatt, status);
+
+            Log.d("TAG", "onReliableWriteCompleted");
+        }
+
+        @Override
+        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
+            super.onReadRemoteRssi(gatt, rssi, status);
+
+            Log.d("TAG", "onReadRemoteRssi");
+        }
+
+        /*
+        @Override
+        public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
+            super.onMtuChanged(gatt, mtu, status);
+        }
+        */
+
+        @Override
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            //super.onServicesDiscovered(gatt, status);
+
+            Log.d("TAG", "onServicesDiscovered received status: " + status);
+            List<BluetoothGattService> gattServices = gatt.getServices();
+            for (BluetoothGattService service : gattServices) {
+                if (service.getUuid().equals(UUID.fromString("06CCE3A0-AF8C-11E3-A5E2-0800200C9A66"))) {
+                    List<BluetoothGattCharacteristic> gattCharacteristics = service.getCharacteristics();
+                    Log.d("TAG", "Number of Characteristics for Service " + service.getUuid().toString() + ": " + gattCharacteristics.size());
+
+                    for (BluetoothGattCharacteristic characteristic : gattCharacteristics) {
+                        if (characteristic.getUuid().equals(UUID.fromString("06CCE3A2-AF8C-11E3-A5E2-0800200C9A66"))) {
+
+                            //Enable local notifications
+                            boolean characteristicNotified = gatt.setCharacteristicNotification(characteristic, true);
+                            Log.d("TAG", "setCharacteristicNotification: " + characteristicNotified);
+
+                            //Enable remote notifications
+                            BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"));
+                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                            gatt.writeDescriptor(descriptor);
+                        }
+                        //else if (characteristic.getUuid().equals(UUID.fromString("06CCE3A3-AF8C-11E3-A5E2-0800200C9A66"))) {
+                        //}
+                    }
+                }
+            }
+        }
+
+        @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            //super.onConnectionStateChange(gatt, status, newState);
+
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.d("TAG", "Connected to GATT Server");
                 gatt.discoverServices();
@@ -141,35 +247,6 @@ public class ScanActivity extends ListActivity {
             else {
                 Log.d("TAG", "onConnectionStateChange status: " + status + " , newState: " + newState);
             }
-        }
-
-        @Override
-        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            Log.d("TAG", "onServicesDiscovered received status: " + status);
-            List<BluetoothGattService> gattServices = gatt.getServices();
-            for (BluetoothGattService service : gattServices) {
-                UUID serviceUUID = service.getUuid();
-                Log.d("TAG", "Service UUID: " + serviceUUID.toString());
-
-                List<BluetoothGattCharacteristic> gattCharacteristics = service.getCharacteristics();
-                for (BluetoothGattCharacteristic characteristic : gattCharacteristics) {
-                    Log.d("TAG", "Characteristic found: ID = " + characteristic.getInstanceId());
-                    byte[] values = characteristic.getValue();
-					/*String str = "";
-					try {
-						str = new String(values, "UTF-8");
-					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
-					}
-
-					Log.d("TAG", "Byte Value: " + str);*/
-                }
-            }
-        }
-
-        @Override
-        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            Log.d("TAG", "onCharacteristicRead status: " + status);
         }
     };
 }
