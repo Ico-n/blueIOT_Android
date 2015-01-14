@@ -4,4 +4,12 @@
     tools:context="de.hdmstuttgart.blueiot.DetailActivity">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_startStopDrawing"
+        android:title="@string/action_detailActivity_stopDrawing"
+        android:icon="@drawable/ic_action_pause_over_video"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_clearData"
+        android:title="@string/action_detailActivity_clearData"
+        android:icon="@drawable/ic_action_discard"
+        app:showAsAction="ifRoom" />
 </menu>

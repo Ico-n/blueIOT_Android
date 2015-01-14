@@ -24,20 +24,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ScanActivity"
-            android:label="@string/title_activity_scan"
+            android:name=".DetailActivity"
+            android:label="@string/title_activity_detail"
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.hdmstuttgart.blueiot.MainActivity" />
-        </activity>
-        <activity
-            android:name=".DetailActivity"
-            android:label="@string/title_activity_detail"
-            android:parentActivityName=".ScanActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.hdmstuttgart.blueiot.ScanActivity" />
         </activity>
     </application>
 
