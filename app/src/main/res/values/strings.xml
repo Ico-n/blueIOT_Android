@@ -10,5 +10,6 @@
     <string name="action_detailActivity_startDrawing">Start Drawing</string>
     <string name="action_detailActivity_stopDrawing">Stop Drawing</string>
     <string name="action_detailActivity_clearData">Clear Data</string>
+    <string name="title_activity_draw">Balance</string>
 
 </resources>

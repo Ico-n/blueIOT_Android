@@ -51,7 +51,7 @@ public class BleDeviceListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = inflater.inflate(R.layout.listitem_device, null);
+        convertView = this.inflater.inflate(R.layout.listitem_device, null);
         TextView textView_Name = (TextView) convertView.findViewById(R.id.device_name);
         TextView textView_Address = (TextView) convertView.findViewById(R.id.device_address);
 

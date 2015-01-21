@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,11 +19,17 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
     private BleDeviceListAdapter bleDeviceListAdapter;
+
     private Handler handler;
+
     private boolean isScanning;
     private boolean isBluetoothSupported;
     private boolean isBleSupported;
+
     private BluetoothAdapter bluetoothAdapter;
+
+    private static final int CONTEXT_MENU_INSPECT = 0;
+    private static final int CONTEXT_MENU_BALANCE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +41,7 @@ public class MainActivity extends ActionBarActivity {
         this.bleDeviceListAdapter = new BleDeviceListAdapter(this);
         listView.setAdapter(this.bleDeviceListAdapter);
 
+        //Used for asynchronous tasks
         this.handler = new Handler();
 
         //Bluetooth Components
@@ -66,7 +74,7 @@ public class MainActivity extends ActionBarActivity {
                         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
                         intent.putExtra("device", device);
 
-                        //Start Activity
+                        //Start DetailActivity
                         startActivity(intent);
                     }
                 }
@@ -77,6 +85,8 @@ public class MainActivity extends ActionBarActivity {
                 }
             }
         });
+
+        this.registerForContextMenu(listView);
     }
 
     @Override
@@ -96,9 +106,6 @@ public class MainActivity extends ActionBarActivity {
             case R.id.action_settings:
                 return true;
             case R.id.action_scan:
-                //TODO
-                //Show Progress Dialog / Disable Action Bar Button for Scanning
-
                 //Check if Bluetooth is supported on the device
                 if (this.isBluetoothSupported) {
                     //Check if BLE is supported on the device
@@ -153,6 +160,71 @@ public class MainActivity extends ActionBarActivity {
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        //Get Reference to the Item that was selected
+        AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        BluetoothDevice device = this.bleDeviceListAdapter.getDevice(acmi.position);
+
+        if (device.getName() != null) {
+            menu.setHeaderTitle(device.getName());
+        }
+        else {
+            if (device.getAddress() != null) {
+                menu.setHeaderTitle(device.getAddress());
+            }
+            else {
+                menu.setHeaderTitle("Bluetooth Device");
+            }
+        }
+
+        //Add Context Menu Items
+        menu.add(Menu.NONE, CONTEXT_MENU_INSPECT, Menu.NONE, "Inspect Device");
+        menu.add(Menu.NONE, CONTEXT_MENU_BALANCE, Menu.NONE, "Balance Ball");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case CONTEXT_MENU_INSPECT: {
+                if (this.isScanning) {
+                    scanLeDevice(false);
+                }
+
+                //TODO
+                //Start new Activity
+                BluetoothDevice device = this.bleDeviceListAdapter.getDevice(acmi.position);
+                Toast.makeText(this, "Clicked ContextMenu for: " + device.getAddress(), Toast.LENGTH_LONG).show();
+                return true;
+            }
+            case CONTEXT_MENU_BALANCE: {
+                if (this.isScanning) {
+                    scanLeDevice(false);
+                }
+
+                BluetoothDevice device = this.bleDeviceListAdapter.getDevice(acmi.position);
+                if (device != null) {
+                    if ((device.getName() != null && device.getName().contains("iBeacon")) || device.getAddress().equals("00:07:80:7F:A6:E0")) {
+                        Intent intent = new Intent(this, DrawActivity.class);
+                        intent.putExtra("device", device);
+                        this.startActivity(intent);
+                    }
+                }
+                else {
+                    //Unable to find the BluetoothDevice in the ListAdapter
+                    Toast.makeText(this, "Unable to get the selected Bluetooth Device. Try scanning again...", Toast.LENGTH_LONG).show();
+                    this.bleDeviceListAdapter.clear();
+                }
+                return true;
+            }
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     //Device Scan Callback

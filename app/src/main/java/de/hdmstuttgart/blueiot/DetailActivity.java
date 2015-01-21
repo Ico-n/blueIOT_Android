@@ -25,11 +25,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class DetailActivity extends ActionBarActivity {
-    //Bluetooth Components
     private BluetoothDevice device;
     private BluetoothGatt bluetoothGatt;
-
-    private Menu menu_detail;
 
     private boolean isConnected;
 
@@ -68,9 +65,6 @@ public class DetailActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_detail, menu);
 
-        //Save Reference to Menu for future use
-        this.menu_detail = menu;
-
         return true;
     }
 
@@ -85,15 +79,15 @@ public class DetailActivity extends ActionBarActivity {
                 if (this.isConnected) {
                     if (this.device != null && this.bluetoothGatt != null) {
                         disconnectFromBlueIOT();
-                        this.menu_detail.findItem(R.id.action_startStopDrawing).setIcon(R.drawable.ic_action_play_over_video);
-                        this.menu_detail.findItem(R.id.action_startStopDrawing).setTitle(R.string.action_detailActivity_startDrawing);
+                        item.setTitle(R.string.action_detailActivity_startDrawing);
+                        item.setIcon(R.drawable.ic_action_play_over_video);
                     }
                 }
                 else {
                     if (this.device != null && this.bluetoothGatt != null) {
                         connectToBlueIOT();
-                        this.menu_detail.findItem(R.id.action_startStopDrawing).setIcon(R.drawable.ic_action_pause_over_video);
-                        this.menu_detail.findItem(R.id.action_startStopDrawing).setTitle(R.string.action_detailActivity_stopDrawing);
+                        item.setTitle(R.string.action_detailActivity_stopDrawing);
+                        item.setIcon(R.drawable.ic_action_pause_over_video);
                     }
                 }
 
@@ -110,7 +104,7 @@ public class DetailActivity extends ActionBarActivity {
     protected void onPause() {
         super.onPause();
 
-        if (this.bluetoothGatt != null) {
+        if (this.bluetoothGatt != null && this.isConnected) {
             try {
                 disconnectFromBlueIOT();
             } catch (Exception ex) {}
@@ -121,7 +115,7 @@ public class DetailActivity extends ActionBarActivity {
     protected void onStop() {
         super.onStop();
 
-        if (this.bluetoothGatt != null) {
+        if (this.bluetoothGatt != null && this.isConnected) {
             try {
                 disconnectFromBlueIOT();
             } catch (Exception ex) {}
@@ -195,10 +189,15 @@ public class DetailActivity extends ActionBarActivity {
 
                 String[] values = value.split(",");
                 if (values.length == 4) {
-                    final int x = Integer.parseInt(values[0].trim());
+                    /*final int x = Integer.parseInt(values[0].trim());
                     final int y = Integer.parseInt(values[1].trim());
                     final int z = Integer.parseInt(values[2].trim());
-                    final int height = Integer.parseInt(values[3].trim());
+                    final int height = Integer.parseInt(values[3].trim());*/
+
+                    final float x = Float.parseFloat(values[0].trim());
+                    final float y = Float.parseFloat(values[1].trim());
+                    final float z = Float.parseFloat(values[2].trim());
+                    final float height = Float.parseFloat(values[3].trim());
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -380,8 +379,9 @@ public class DetailActivity extends ActionBarActivity {
     }
 
     private void clearGraphViewData() {
+
         //TODO
-        //Generic approach using this.graphView.getSeries()
+        //Implement generic approach using this.graphView.getSeries()
 
         for (LineGraphSeries<DataPoint> series : this.seriesCollection) {
             Iterator<DataPoint> iterator = series.getValues(this.x_Axis_Value - 1, this.x_Axis_Value);
@@ -391,7 +391,6 @@ public class DetailActivity extends ActionBarActivity {
             }
 
             if (dataPoint != null) {
-                //series.resetData(new DataPoint[] { new DataPoint(dataPoint.getX(), dataPoint.getY()) });
                 series.resetData(new DataPoint[] { new DataPoint(0, dataPoint.getY()) });
             }
             else {
