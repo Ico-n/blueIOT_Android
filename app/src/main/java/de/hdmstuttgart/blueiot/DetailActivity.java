@@ -189,11 +189,6 @@ public class DetailActivity extends ActionBarActivity {
 
                 String[] values = value.split(",");
                 if (values.length == 4) {
-                    /*final int x = Integer.parseInt(values[0].trim());
-                    final int y = Integer.parseInt(values[1].trim());
-                    final int z = Integer.parseInt(values[2].trim());
-                    final int height = Integer.parseInt(values[3].trim());*/
-
                     final float x = Float.parseFloat(values[0].trim());
                     final float y = Float.parseFloat(values[1].trim());
                     final float z = Float.parseFloat(values[2].trim());

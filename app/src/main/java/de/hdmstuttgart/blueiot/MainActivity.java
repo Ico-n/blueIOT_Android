@@ -199,7 +199,11 @@ public class MainActivity extends ActionBarActivity {
                 //TODO
                 //Start new Activity
                 BluetoothDevice device = this.bleDeviceListAdapter.getDevice(acmi.position);
-                Toast.makeText(this, "Clicked ContextMenu for: " + device.getAddress(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "Clicked ContextMenu for: " + device.getAddress(), Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this, InspectDeviceActivity.class);
+                intent.putExtra("device", device);
+
+                startActivity(intent);
                 return true;
             }
             case CONTEXT_MENU_BALANCE: {

@@ -11,5 +11,26 @@
     <string name="action_detailActivity_stopDrawing">Stop Drawing</string>
     <string name="action_detailActivity_clearData">Clear Data</string>
     <string name="title_activity_draw">Balance</string>
+    <string name="title_activity_inspect_device">InspectDeviceActivity</string>
+    <string name="BluetoothGattCharacteristic.PERMISSION_READ.Description">Read</string>
+    <string name="BluetoothGattCharacteristic.PERMISSION_READ_ENCRYPTED.Description">Encrypted Read</string>
+    <string name="BluetoothGattCharacteristic.PERMISSION_READ_ENCRYPTED_MITM.Description">Read with man-in-the-middle protection</string>
+    <string name="BluetoothGattCharacteristic.PERMISSION_WRITE.Description">Write</string>
+    <string name="BluetoothGattCharacteristic.PERMISSION_WRITE_ENCRYPTED.Description">Encrypted Write</string>
+    <string name="BluetoothGattCharacteristic.PERMISSION_WRITE_ENCRYPTED_MITM.Description">Encrypted Write with man-in-the-middle protection</string>
+    <string name="BluetoothGattCharacteristic.PERMISSION_WRITE_SIGNED.Description">Signed Write</string>
+    <string name="BluetoothGattCharacteristic.PERMISSION_WRITE_SIGNED_MITM.Description">Signed Write with man-in-the-middle protection</string>
+    <string name="BluetoothGattCharacteristic.PROPERTY_BROADCAST.Description">Broadcastable</string>
+    <string name="BluetoothGattCharacteristic.PROPERTY_EXTENDED_PROPS.Description">Has extended properties</string>
+    <string name="BluetoothGattCharacteristic.PROPERTY_INDICATE.Description">Supports indication</string>
+    <string name="BluetoothGattCharacteristic.PROPERTY_NOTIFY.Description">Supports notification</string>
+    <string name="BluetoothGattCharacteristic.PROPERTY_READ.Description">Readable</string>
+    <string name="BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE.Description">Write with signature</string>
+    <string name="BluetoothGattCharacteristic.PROPERTY_WRITE.Description">Writable</string>
+    <string name="BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE.Description">Writable without response</string>
+    <string name="BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT.Description">Write characteristic requesting acknowledgement</string>
+    <string name="BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE.Description">Write characteristic without requiring a response</string>
+    <string name="BluetoothGattCharacteristic.WRITE_TYPE_SIGNED.Description">Write characteristic including authentication signature</string>
+    <string name="action_inspectDeviceActivity_disconnect">Disconnect</string>
 
 </resources>

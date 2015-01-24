@@ -39,6 +39,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.hdmstuttgart.blueiot.MainActivity" />
         </activity>
+        <activity
+            android:name=".InspectDeviceActivity"
+            android:label="@string/title_activity_inspect_device"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.hdmstuttgart.blueiot.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
