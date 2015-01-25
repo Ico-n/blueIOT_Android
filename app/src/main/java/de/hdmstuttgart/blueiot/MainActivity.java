@@ -46,7 +46,9 @@ public class MainActivity extends ActionBarActivity {
 
         //Bluetooth Components
         BluetoothManager bluetoothManager = (BluetoothManager) this.getSystemService(Context.BLUETOOTH_SERVICE);
-        this.bluetoothAdapter = bluetoothManager.getAdapter();
+        if (bluetoothManager != null) {
+            this.bluetoothAdapter = bluetoothManager.getAdapter();
+        }
 
         //Check if Bluetooth is supported on the device
         if (this.bluetoothAdapter != null) {
@@ -86,6 +88,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        //Enable the ContextMenu for the ListView
         this.registerForContextMenu(listView);
     }
 
@@ -151,7 +154,9 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //Check for predefined 'Enable-Bluetooth-Intent'
         if (requestCode == 1337) {
+            //If Bluetooth has been activated, start scanning
             if (resultCode == -1) {
                 if (!this.isScanning) {
                     scanLeDevice(true);
@@ -196,10 +201,8 @@ public class MainActivity extends ActionBarActivity {
                     scanLeDevice(false);
                 }
 
-                //TODO
-                //Start new Activity
+                //Start an Activity, that allows inspecting the BLE-Device
                 BluetoothDevice device = this.bleDeviceListAdapter.getDevice(acmi.position);
-                //Toast.makeText(this, "Clicked ContextMenu for: " + device.getAddress(), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(this, InspectDeviceActivity.class);
                 intent.putExtra("device", device);
 
@@ -213,7 +216,9 @@ public class MainActivity extends ActionBarActivity {
 
                 BluetoothDevice device = this.bleDeviceListAdapter.getDevice(acmi.position);
                 if (device != null) {
+                    //Allow blueIOT ONLY!
                     if ((device.getName() != null && device.getName().contains("iBeacon")) || device.getAddress().equals("00:07:80:7F:A6:E0")) {
+                        //Start new Activity
                         Intent intent = new Intent(this, DrawActivity.class);
                         intent.putExtra("device", device);
                         this.startActivity(intent);

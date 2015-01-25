@@ -42,7 +42,7 @@ public class InspectDeviceActivity extends ActionBarActivity {
 
             //Initiate connection process
             if (!this.isConnected) {
-                connectToBlueIOT();
+                connectToBleDevice();
             }
         }
     }
@@ -61,7 +61,7 @@ public class InspectDeviceActivity extends ActionBarActivity {
             case R.id.action_settings:
                 return true;
             case R.id.action_disconnect:
-                disconnectFromBlueIOT();
+                disconnectFromBleDevice();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -72,9 +72,10 @@ public class InspectDeviceActivity extends ActionBarActivity {
     protected void onPause() {
         super.onPause();
 
+        this.listAdapter.clear();
         if (this.bluetoothGatt != null && this.isConnected) {
             try {
-                disconnectFromBlueIOT();
+                disconnectFromBleDevice();
             } catch (Exception ex) {}
         }
     }
@@ -86,7 +87,7 @@ public class InspectDeviceActivity extends ActionBarActivity {
         this.listAdapter.clear();
         if (this.bluetoothGatt != null && this.isConnected) {
             try {
-                disconnectFromBlueIOT();
+                disconnectFromBleDevice();
             } catch (Exception ex) {}
         }
     }
@@ -97,7 +98,7 @@ public class InspectDeviceActivity extends ActionBarActivity {
             //super.onConnectionStateChange(gatt, status, newState);
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                //Start discovering all Services on the BLE-Remote-Device (i.e. blueIOT)
+                //Start discovering all Services on the BLE-Remote-Device
                 gatt.discoverServices();
             }
         }
@@ -161,15 +162,15 @@ public class InspectDeviceActivity extends ActionBarActivity {
         */
     };
 
-    private void connectToBlueIOT() {
+    private void connectToBleDevice() {
         if (!this.isConnected) {
             this.bluetoothGatt = this.device.connectGatt(this, false, this.gattCallback);
             this.isConnected = true;
         }
     }
 
-    private void disconnectFromBlueIOT() {
-        if (this.isConnected) {
+    private void disconnectFromBleDevice() {
+        if (this.isConnected && this.bluetoothGatt != null) {
             this.bluetoothGatt.disconnect();
             this.isConnected = false;
         }

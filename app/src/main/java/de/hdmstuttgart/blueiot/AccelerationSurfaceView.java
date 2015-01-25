@@ -23,6 +23,7 @@ public class AccelerationSurfaceView extends SurfaceView {
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
+                //Start new 'Drawing'-Thread
                 thread = new AccelerationSurfaceThread(holder, context, device);
                 thread.setRunning(true);
                 thread.start();
@@ -30,11 +31,13 @@ public class AccelerationSurfaceView extends SurfaceView {
 
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+                //Update the Surface Size
                 thread.setSurfaceSize(width, height);
             }
 
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
+                //Stop the Thread when the Surface is destroyed
                 boolean retry = true;
                 thread.setRunning(false);
                 while (retry) {

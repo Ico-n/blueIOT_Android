@@ -16,7 +16,7 @@ public class BleDeviceListAdapter extends BaseAdapter {
 
     public BleDeviceListAdapter(Context context) {
         super();
-        this.bleDevices = new ArrayList<BluetoothDevice>();
+        this.bleDevices = new ArrayList<>();
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 

@@ -104,12 +104,15 @@ public class BleExpandableListAdapter extends BaseExpandableListAdapter {
         String serviceDescription = "";
         String serviceUUID = "";
         if (service != null) {
-            if (service.getType() == 0)
+            if (service.getType() == 0) {
                 serviceDescription = "Primary Service";
-            else if (service.getType() == 1)
+            }
+            else if (service.getType() == 1) {
                 serviceDescription = "Secondary Service";
-            else
+            }
+            else {
                 serviceDescription = "Unknown Service";
+            }
 
             serviceUUID = service.getUuid().toString();
         }
@@ -132,15 +135,10 @@ public class BleExpandableListAdapter extends BaseExpandableListAdapter {
         String characteristicProperties = "";
         String characteristicWriteType = "";
         if (characteristic != null) {
-            /*characteristicUUID = characteristic.getUuid().toString();
+            characteristicUUID = characteristic.getUuid().toString();
             characteristicPermissions = getCharacteristicPermissionDescription(characteristic);
             characteristicProperties = getCharacteristicPropertyDescription(characteristic);
-            characteristicWriteType = getCharacteristicWriteTypeDescription(characteristic);*/
-
-            characteristicUUID = characteristic.getUuid().toString();
-            characteristicPermissions = String.valueOf(characteristic.getPermissions());
-            characteristicProperties = String.valueOf(characteristic.getProperties());
-            characteristicWriteType = String.valueOf(characteristic.getWriteType());
+            characteristicWriteType = getCharacteristicWriteTypeDescription(characteristic);
         }
 
         convertView = this.inflater.inflate(R.layout.list_child_item, null);
@@ -175,7 +173,7 @@ public class BleExpandableListAdapter extends BaseExpandableListAdapter {
             case 256:
                 return this.context.getString(R.string.BluetoothGattCharacteristic_PERMISSION_WRITE_SIGNED_MITM_Description);
             default:
-                return "";
+                return String.valueOf(characteristic.getPermissions());
         }
     }
 
@@ -198,7 +196,7 @@ public class BleExpandableListAdapter extends BaseExpandableListAdapter {
             case 128:
                 return this.context.getString(R.string.BluetoothGattCharacteristic_PROPERTY_EXTENDED_PROPS_Description);
             default:
-                return "";
+                return String.valueOf(characteristic.getProperties());
         }
     }
 
@@ -211,7 +209,7 @@ public class BleExpandableListAdapter extends BaseExpandableListAdapter {
             case 4:
                 return this.context.getString(R.string.BluetoothGattCharacteristic_WRITE_TYPE_SIGNED_Description);
             default:
-                return "";
+                return String.valueOf(characteristic.getWriteType());
         }
     }
 }

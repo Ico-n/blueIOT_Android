@@ -16,10 +16,15 @@ public class DrawActivity extends ActionBarActivity {
 
         //Initialize BluetoothDevice
         BluetoothDevice device = this.getIntent().getParcelableExtra("device");
-        
-        this.accelerationSurfaceView = new AccelerationSurfaceView(this);
-        this.accelerationSurfaceView.initialize(device);
 
+        //Instantiate new SurfaceView
+        this.accelerationSurfaceView = new AccelerationSurfaceView(this);
+        if (device != null) {
+            //Pass over the BluetoothDevice and start the Drawing-Thread
+            this.accelerationSurfaceView.initialize(device);
+        }
+
+        //Display the SurfaceView
         setContentView(this.accelerationSurfaceView);
     }
 

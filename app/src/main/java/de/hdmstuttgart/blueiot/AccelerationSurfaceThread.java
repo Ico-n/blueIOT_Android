@@ -55,12 +55,14 @@ public class AccelerationSurfaceThread extends Thread {
         while (this.run) {
             Canvas canvas = null;
             try {
+                //Lock the Canvas, then draw onto it
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized (this.surfaceHolder) {
                     doDraw(canvas);
                 }
             }
             finally {
+                //Unlock Canvas and post it back
                 if (canvas != null) {
                     this.surfaceHolder.unlockCanvasAndPost(canvas);
                 }
@@ -71,6 +73,7 @@ public class AccelerationSurfaceThread extends Thread {
     }
 
     private void doDraw(Canvas canvas) {
+        //Save --> Draw --> Restore
         canvas.save();
         canvas.drawColor(Color.WHITE);
         canvas.drawCircle(this.x, this.y, 50, this.paint);
@@ -78,6 +81,7 @@ public class AccelerationSurfaceThread extends Thread {
     }
 
     private void doStart() {
+        //Put the circle in the middle of the Canvas
         synchronized (this.surfaceHolder) {
             this.x = this.canvasWidth / 2;
             this.y = this.canvasHeight / 2;
@@ -85,6 +89,7 @@ public class AccelerationSurfaceThread extends Thread {
     }
 
     public void setSurfaceSize(int width, int height) {
+        //Initial Setup for the Surface
         synchronized (this.surfaceHolder) {
             this.canvasWidth = width;
             this.canvasHeight = height;
@@ -156,6 +161,7 @@ public class AccelerationSurfaceThread extends Thread {
                     //final float zAcceleration = Float.parseFloat(values[2].trim());
                     //final float height = Float.parseFloat(values[3].trim());
 
+                    //Update X and Y
                     x += yAcceleration / 100;
                     y += xAcceleration / 100;
                 }
@@ -199,7 +205,7 @@ public class AccelerationSurfaceThread extends Thread {
     }
 
     private void disconnectFromBlueIOT() {
-        if (this.isConnected) {
+        if (this.isConnected && this.bluetoothGatt != null) {
             this.bluetoothGatt.disconnect();
             this.isConnected = false;
         }

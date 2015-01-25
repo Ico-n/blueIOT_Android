@@ -30,7 +30,6 @@ public class DetailActivity extends ActionBarActivity {
 
     private boolean isConnected;
 
-    private GraphView graphView;
     private int x_Axis_Value = 0;
 
     //Series used for displaying an individual value from the blueIOT-Sensors
@@ -77,6 +76,7 @@ public class DetailActivity extends ActionBarActivity {
         switch (id) {
             case R.id.action_startStopDrawing:
                 if (this.isConnected) {
+                    //Disconnect and show 'Play'-Icon
                     if (this.device != null && this.bluetoothGatt != null) {
                         disconnectFromBlueIOT();
                         item.setTitle(R.string.action_detailActivity_startDrawing);
@@ -84,6 +84,7 @@ public class DetailActivity extends ActionBarActivity {
                     }
                 }
                 else {
+                    //Connect and show 'Pause'-Icon
                     if (this.device != null && this.bluetoothGatt != null) {
                         connectToBlueIOT();
                         item.setTitle(R.string.action_detailActivity_stopDrawing);
@@ -194,6 +195,7 @@ public class DetailActivity extends ActionBarActivity {
                     final float z = Float.parseFloat(values[2].trim());
                     final float height = Float.parseFloat(values[3].trim());
 
+                    //Update UI with new Sensor-Values
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -327,7 +329,7 @@ public class DetailActivity extends ActionBarActivity {
     }
 
     private void disconnectFromBlueIOT() {
-        if (this.isConnected) {
+        if (this.isConnected && this.bluetoothGatt != null) {
             this.bluetoothGatt.disconnect();
             this.isConnected = false;
         }
@@ -351,8 +353,6 @@ public class DetailActivity extends ActionBarActivity {
         this.series_Height.setTitle("Height");
         this.series_Height.setColor(Color.GREEN);
 
-        //TODO
-        //To be removed
         this.seriesCollection.add(this.series_X);
         this.seriesCollection.add(this.series_Y);
         this.seriesCollection.add(this.series_Z);
@@ -361,23 +361,22 @@ public class DetailActivity extends ActionBarActivity {
 
     private void initializeGraphView() {
         //Setup GraphView
-        this.graphView = (GraphView) this.findViewById(R.id.graph);
+        GraphView graphView = (GraphView) this.findViewById(R.id.graph);
 
-        this.graphView.addSeries(this.series_X);
-        this.graphView.addSeries(this.series_Y);
-        this.graphView.addSeries(this.series_Z);
-        this.graphView.addSeries(this.series_Height);
+        //Add Series
+        graphView.addSeries(this.series_X);
+        graphView.addSeries(this.series_Y);
+        graphView.addSeries(this.series_Z);
+        graphView.addSeries(this.series_Height);
 
-        this.graphView.getLegendRenderer().setVisible(true);
-        this.graphView.getLegendRenderer().setTextSize(20);
-        this.graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+        //Display Legend
+        graphView.getLegendRenderer().setVisible(true);
+        graphView.getLegendRenderer().setTextSize(20);
+        graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
     }
 
     private void clearGraphViewData() {
-
-        //TODO
-        //Implement generic approach using this.graphView.getSeries()
-
+        //Reset the values for each of the series shown in the GraphView (--> Start from x = 0 again)
         for (LineGraphSeries<DataPoint> series : this.seriesCollection) {
             Iterator<DataPoint> iterator = series.getValues(this.x_Axis_Value - 1, this.x_Axis_Value);
             DataPoint dataPoint = null;
