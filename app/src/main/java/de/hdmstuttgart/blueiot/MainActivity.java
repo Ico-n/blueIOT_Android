@@ -115,12 +115,8 @@ public class MainActivity extends ActionBarActivity {
                     if (this.isBleSupported) {
                         //Check if Bluetooth is currently enabled
                         if (this.bluetoothAdapter.isEnabled()) {
-                            if (this.isScanning) {
-                                scanLeDevice(false);
-                            }
-                            else {
-                                scanLeDevice(true);
-                            }
+                            //If already scanning, stop the scan. Else, start a new scan
+                            scanLeDevice(!this.isScanning);
                         }
                         else {
                             //Show a Dialog, allowing the User to turn Bluetooth ON
@@ -233,6 +229,17 @@ public class MainActivity extends ActionBarActivity {
             }
             default:
                 return super.onContextItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //Delete previously added devices when resuming --> force new scan
+        if (this.bleDeviceListAdapter != null) {
+            this.bleDeviceListAdapter.clear();
+            this.bleDeviceListAdapter.notifyDataSetChanged();
         }
     }
 

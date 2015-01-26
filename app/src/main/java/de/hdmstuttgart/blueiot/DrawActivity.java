@@ -12,7 +12,6 @@ public class DrawActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_draw);
 
         //Initialize BluetoothDevice
         BluetoothDevice device = this.getIntent().getParcelableExtra("device");

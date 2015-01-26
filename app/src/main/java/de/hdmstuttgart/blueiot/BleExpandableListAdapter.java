@@ -114,7 +114,7 @@ public class BleExpandableListAdapter extends BaseExpandableListAdapter {
                 serviceDescription = "Unknown Service";
             }
 
-            serviceUUID = service.getUuid().toString();
+            serviceUUID = "UUID: " + service.getUuid().toString();
         }
 
         convertView = this.inflater.inflate(R.layout.list_group_item, null);
@@ -144,7 +144,7 @@ public class BleExpandableListAdapter extends BaseExpandableListAdapter {
         convertView = this.inflater.inflate(R.layout.list_child_item, null);
 
         TextView textView_characteristicDescription = (TextView) convertView.findViewById(R.id.characteristic_description);
-        textView_characteristicDescription.setText("UUID: " + characteristicUUID + ", Permission: " + characteristicPermissions + ", Properties: " + characteristicProperties + ", WriteType: " + characteristicWriteType);
+        textView_characteristicDescription.setText("Characteristic UUID: " + characteristicUUID + ", Permission: " + characteristicPermissions + ", Properties: " + characteristicProperties + ", WriteType: " + characteristicWriteType);
 
         return convertView;
     }

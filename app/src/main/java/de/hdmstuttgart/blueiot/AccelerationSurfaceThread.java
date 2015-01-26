@@ -24,9 +24,11 @@ public class AccelerationSurfaceThread extends Thread {
     private boolean run = false;
     private boolean isConnected;
 
-    private int canvasWidth = 500;
-    private int canvasHeight = 300;
+    //Display size, initially set within setSurfaceSize(width, height)
+    private int canvasWidth;
+    private int canvasHeight;
 
+    //X and Y values, used for drawing onto the Canvas
     private float x;
     private float y;
 
@@ -164,6 +166,21 @@ public class AccelerationSurfaceThread extends Thread {
                     //Update X and Y
                     x += yAcceleration / 100;
                     y += xAcceleration / 100;
+
+                    //Stay within the Display-Bounds for X and Y
+                    if (x < 25) {
+                        x = 25;
+                    }
+                    if (x > canvasWidth - 25) {
+                        x = canvasWidth - 25;
+                    }
+
+                    if (y < 25) {
+                        y = 25;
+                    }
+                    if (y > canvasHeight - 25) {
+                        y = canvasHeight - 25;
+                    }
                 }
             }
             catch (Exception ex) {}
