@@ -17,17 +17,27 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+/**
+ * The MainActivity is the Activity that is shown when the application is started.
+ * It uses a ListView in order to display BluetoothDevices that were found while scanning.
+ * Displaying each of the devices as a ListItem (Custom View, see 'res\layout\listitem_device.xml') is done by the associated BleDeviceListAdapter.
+ * Apart from the ListView, the ActionBar (see 'res\menu\menu_main.xml') is the main component of this Activity, allowing the user to initiate a Bluetooth-Search
+ */
 public class MainActivity extends ActionBarActivity {
+    //Custom Adapter for the ListView
     private BleDeviceListAdapter bleDeviceListAdapter;
 
+    //Used for triggering asynchronous events
     private Handler handler;
 
+    //Helper fields for Bluetooth-Connectivity
     private boolean isScanning;
     private boolean isBluetoothSupported;
     private boolean isBleSupported;
 
     private BluetoothAdapter bluetoothAdapter;
 
+    //Context Menu IDs
     private static final int CONTEXT_MENU_INSPECT = 0;
     private static final int CONTEXT_MENU_BALANCE = 1;
 
@@ -96,6 +106,7 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
@@ -171,6 +182,7 @@ public class MainActivity extends ActionBarActivity {
         AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
         BluetoothDevice device = this.bleDeviceListAdapter.getDevice(acmi.position);
 
+        //Set the header title
         if (device.getName() != null) {
             menu.setHeaderTitle(device.getName());
         }
@@ -193,6 +205,7 @@ public class MainActivity extends ActionBarActivity {
         AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case CONTEXT_MENU_INSPECT: {
+                //Stop scanning
                 if (this.isScanning) {
                     scanLeDevice(false);
                 }
@@ -203,9 +216,11 @@ public class MainActivity extends ActionBarActivity {
                 intent.putExtra("device", device);
 
                 startActivity(intent);
+
                 return true;
             }
             case CONTEXT_MENU_BALANCE: {
+                //Stop scanning
                 if (this.isScanning) {
                     scanLeDevice(false);
                 }
@@ -214,7 +229,7 @@ public class MainActivity extends ActionBarActivity {
                 if (device != null) {
                     //Allow blueIOT ONLY!
                     if ((device.getName() != null && device.getName().contains("iBeacon")) || device.getAddress().equals("00:07:80:7F:A6:E0")) {
-                        //Start new Activity
+                        //Start new Activity to start drawing
                         Intent intent = new Intent(this, DrawActivity.class);
                         intent.putExtra("device", device);
                         this.startActivity(intent);
@@ -225,6 +240,7 @@ public class MainActivity extends ActionBarActivity {
                     Toast.makeText(this, "Unable to get the selected Bluetooth Device. Try scanning again...", Toast.LENGTH_LONG).show();
                     this.bleDeviceListAdapter.clear();
                 }
+
                 return true;
             }
             default:
@@ -236,14 +252,16 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
 
-        //Delete previously added devices when resuming --> force new scan
+        //Delete previously added devices when resuming --> forces a new scan
         if (this.bleDeviceListAdapter != null) {
             this.bleDeviceListAdapter.clear();
             this.bleDeviceListAdapter.notifyDataSetChanged();
         }
     }
 
-    //Device Scan Callback
+    /**
+     * Device Scan Callback adding detected BluetoothDevices into the ListAdapter.
+     */
     private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
@@ -258,6 +276,10 @@ public class MainActivity extends ActionBarActivity {
         }
     };
 
+    /**
+     * Initiates/Terminates a Scan for BluetoothDevices with the previously defined LeScanCallback
+     * @param enable Indicates whether to start|stop the Scan-Process
+     */
     private void scanLeDevice(final boolean enable) {
         if (enable) {
             //Stops scanning after a defined scan period

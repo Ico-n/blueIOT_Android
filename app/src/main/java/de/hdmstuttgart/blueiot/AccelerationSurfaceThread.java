@@ -15,14 +15,28 @@ import android.view.SurfaceHolder;
 
 import java.util.UUID;
 
+/**
+ * Custom Thread-Class that is used to draw onto the SurfaceView that is being passed over in the Constructor.
+ * Handles synchronized access to the underlying Canvas-Element that is part of the SurfaceView in its run-Method
+ * By drawing onto the Canvas, the Thread will make sure to lock access to the shared Canvas, then draw onto it and finally unlocking it again and report back all of the changes
+ */
 public class AccelerationSurfaceThread extends Thread {
     private SurfaceHolder surfaceHolder;
     private Context context;
 
+    //Paint-Object used to draw the circle
     private Paint paint = new Paint();
 
     private boolean run = false;
     private boolean isConnected;
+    private boolean isFadingEnabled = false;
+
+    /**
+     * Setter-method without parameter: reverts the boolean for fading
+     */
+    public void setFadingEnabled() {
+        this.isFadingEnabled = !this.isFadingEnabled;
+    }
 
     //Display size, initially set within setSurfaceSize(width, height)
     private int canvasWidth;
@@ -32,14 +46,21 @@ public class AccelerationSurfaceThread extends Thread {
     private float x;
     private float y;
 
+    //Bluetooth-components
     private BluetoothDevice device;
     private BluetoothGatt bluetoothGatt;
 
+    /**
+     * Constructor
+     * @param surfaceHolder The SurfaceHolder that encapsulates the underlying Canvas-Element
+     * @param context The Context used to connect to blueIOT from
+     * @param device The BluetoothDevice to connect to
+     */
     public AccelerationSurfaceThread(SurfaceHolder surfaceHolder, Context context, BluetoothDevice device) {
         this.surfaceHolder = surfaceHolder;
         this.context = context;
 
-        this.paint.setColor(Color.BLUE);
+        this.paint.setColor(Color.GREEN);
         this.paint.setStyle(Paint.Style.FILL);
 
         this.device = device;
@@ -50,10 +71,14 @@ public class AccelerationSurfaceThread extends Thread {
         }
     }
 
+    /**
+     * Is called continuously while the Thread is running
+     */
     @Override
     public void run() {
         super.run();
 
+        //Infinite loop until the Thread is being stopped
         while (this.run) {
             Canvas canvas = null;
             try {
@@ -74,14 +99,32 @@ public class AccelerationSurfaceThread extends Thread {
         disconnectFromBlueIOT();
     }
 
+    /**
+     * Draws onto the Canvas
+     * @param canvas The Canvas to draw onto
+     */
     private void doDraw(Canvas canvas) {
         //Save --> Draw --> Restore
         canvas.save();
-        canvas.drawColor(Color.WHITE);
+
+        //Draw Background, use slightly transparent background to enable fading-effect
+        if (this.isFadingEnabled) {
+            canvas.drawColor(Color.argb(10, 0, 0, 0));
+        }
+        else {
+            canvas.drawColor(Color.BLACK);
+        }
+
+        //Draw Circle
         canvas.drawCircle(this.x, this.y, 50, this.paint);
+
         canvas.restore();
     }
 
+    /**
+     * Called initially (e.g. when the surface size is being set)
+     * Positions the x- and y-value for the circle in the middle
+     */
     private void doStart() {
         //Put the circle in the middle of the Canvas
         synchronized (this.surfaceHolder) {
@@ -90,19 +133,34 @@ public class AccelerationSurfaceThread extends Thread {
         }
     }
 
+    /**
+     * Called when the surface size of the display changes (e.g. orientation of the device)
+     * @param width Pixel Width of the Display
+     * @param height Pixel Height of the Display
+     */
     public void setSurfaceSize(int width, int height) {
         //Initial Setup for the Surface
         synchronized (this.surfaceHolder) {
             this.canvasWidth = width;
             this.canvasHeight = height;
+
+            //Setup Circle
             doStart();
         }
     }
 
-    public void setRunning(boolean b) {
-        this.run = b;
+    /**
+     * Start/Stop the Thread
+     * @param doRun Boolean value indicating whether to start|stop the Thread
+     */
+    public void setRunning(boolean doRun) {
+        this.run = doRun;
     }
 
+    /**
+     * BluetoothGattCallback that is used to connect to a remote BLE-Device.
+     * Defines callback-methods that are used for each step in the process of connecting/reading/writing for that device.
+     */
     private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -164,10 +222,10 @@ public class AccelerationSurfaceThread extends Thread {
                     //final float height = Float.parseFloat(values[3].trim());
 
                     //Update X and Y
-                    x += yAcceleration / 100;
-                    y += xAcceleration / 100;
+                    x += xAcceleration / 10;
+                    y += yAcceleration / 10;
 
-                    //Stay within the Display-Bounds for X and Y
+                    //Stay within the Display-Bounds for X and Y when drawing the circle
                     if (x < 25) {
                         x = 25;
                     }
@@ -214,6 +272,9 @@ public class AccelerationSurfaceThread extends Thread {
         */
     };
 
+    /**
+     * Connects to the blueIOT with the predefined BluetoothGattCallback
+     */
     private void connectToBlueIOT() {
         if (!this.isConnected) {
             this.bluetoothGatt = this.device.connectGatt(this.context, false, this.gattCallback);
@@ -221,6 +282,9 @@ public class AccelerationSurfaceThread extends Thread {
         }
     }
 
+    /**
+     * Disconnects from blueIOT
+     */
     private void disconnectFromBlueIOT() {
         if (this.isConnected && this.bluetoothGatt != null) {
             this.bluetoothGatt.disconnect();

@@ -4,4 +4,7 @@
     tools:context="de.hdmstuttgart.blueiot.DrawActivity">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_setFadingEnabled"
+        android:title="@string/action_setFadingEnabled"
+        app:showAsAction="ifRoom" />
 </menu>

@@ -32,5 +32,6 @@
     <string name="BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE.Description">Write characteristic without requiring a response</string>
     <string name="BluetoothGattCharacteristic.WRITE_TYPE_SIGNED.Description">Write characteristic including authentication signature</string>
     <string name="action_inspectDeviceActivity_disconnect">Disconnect</string>
+    <string name="action_setFadingEnabled">Fading</string>
 
 </resources>

@@ -10,7 +10,6 @@ import android.bluetooth.BluetoothProfile;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -24,12 +23,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Activity used for displaying the sensor-values in a line chart.
+ * The graph will display acceleration values for the X, Y and Z axis as well as the relative height.
+ * The different colours are explained in the legend that can be found in the top right of the GraphView.
+ * The continuous drawing can be interrupted by using the buttons in the ActionBar: This allows stopping and resuming the drawing of new sensor values.
+ */
 public class DetailActivity extends ActionBarActivity {
     private BluetoothDevice device;
     private BluetoothGatt bluetoothGatt;
 
     private boolean isConnected;
 
+    //X-Axis-Value used to put new values into the graph
     private int x_Axis_Value = 0;
 
     //Series used for displaying an individual value from the blueIOT-Sensors
@@ -69,9 +75,6 @@ public class DetailActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch (id) {
             case R.id.action_startStopDrawing:
@@ -123,6 +126,10 @@ public class DetailActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * BluetoothGattCallback that is used to connect to a remote BLE-Device.
+     * Defines callback-methods that are used for each step in the process of connecting/reading/writing for that device.
+     */
     private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -132,20 +139,16 @@ public class DetailActivity extends ActionBarActivity {
                 //Start discovering all Services on the BLE-Remote-Device (i.e. blueIOT)
                 gatt.discoverServices();
             }
-            else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.d("TAG", "Disconnected from GATT-Server");
-            }
-            else {
-                Log.d("TAG", "onConnectionStateChange status: " + status + ", newState: " + newState);
-            }
         }
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             //super.onServicesDiscovered(gatt, status);
 
+            //Find the correct Service on blueIOT
             BluetoothGattService gattService = gatt.getService(UUID.fromString("06CCE3A0-AF8C-11E3-A5E2-0800200C9A66"));
             if (gattService != null) {
+                //Find the correct Characteristic where we can set a notification for ourselves
                 BluetoothGattCharacteristic characteristic = gattService.getCharacteristic(UUID.fromString("06CCE3A2-AF8C-11E3-A5E2-0800200C9A66"));
                 if (characteristic != null) {
                     //Enable local notifications (i.e. Android-Application)
@@ -190,6 +193,7 @@ public class DetailActivity extends ActionBarActivity {
 
                 String[] values = value.split(",");
                 if (values.length == 4) {
+                    //Parse values
                     final float x = Float.parseFloat(values[0].trim());
                     final float y = Float.parseFloat(values[1].trim());
                     final float z = Float.parseFloat(values[2].trim());
@@ -321,6 +325,9 @@ public class DetailActivity extends ActionBarActivity {
     }
     */
 
+    /**
+     * Connects to the blueIOT with the predefined BluetoothGattCallback
+     */
     private void connectToBlueIOT() {
         if (!this.isConnected) {
             this.bluetoothGatt = this.device.connectGatt(this, false, this.gattCallback);
@@ -328,6 +335,9 @@ public class DetailActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Disconnects from blueIOT
+     */
     private void disconnectFromBlueIOT() {
         if (this.isConnected && this.bluetoothGatt != null) {
             this.bluetoothGatt.disconnect();
@@ -335,6 +345,10 @@ public class DetailActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Initializes all of the series.
+     * Sets the title and the color of each series and instantiates them as LineGraphSeries-Objects
+     */
     private void initializeSeries() {
         //Series configuration
         this.series_X = new LineGraphSeries<>();
@@ -359,6 +373,10 @@ public class DetailActivity extends ActionBarActivity {
         this.seriesCollection.add(this.series_Height);
     }
 
+    /**
+     * Initializes the GraphView
+     * Attaches all of the series to the GraphView and displays a legend
+     */
     private void initializeGraphView() {
         //Setup GraphView
         GraphView graphView = (GraphView) this.findViewById(R.id.graph);
@@ -375,6 +393,10 @@ public class DetailActivity extends ActionBarActivity {
         graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
     }
 
+    /**
+     * Clears the GraphView data.
+     * Retrieves the last point that was previously added for each series and starts anew with that Y-value from x = 0
+     */
     private void clearGraphViewData() {
         //Reset the values for each of the series shown in the GraphView (--> Start from x = 0 again)
         for (LineGraphSeries<DataPoint> series : this.seriesCollection) {

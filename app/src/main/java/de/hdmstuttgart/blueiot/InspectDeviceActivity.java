@@ -13,10 +13,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
 
+/**
+ * This Activity is used to display information that has been gathered on a remote BluetoothDevice.
+ * It will display an ExpandableListView containing every BluetoothGattService and its associated BluetoothGattCharacteristics
+ */
 public class InspectDeviceActivity extends ActionBarActivity {
     private BluetoothDevice device;
     private BluetoothGatt bluetoothGatt;
 
+    //Custom ListAdapter used for the ExpandableListView
     private BleExpandableListAdapter listAdapter;
 
     private boolean isConnected;
@@ -31,8 +36,10 @@ public class InspectDeviceActivity extends ActionBarActivity {
         this.listAdapter = new BleExpandableListAdapter(this);
         listView.setAdapter(this.listAdapter);
 
+        //Get the BluetoothDevice from the Intent that started this Activity
         this.device = this.getIntent().getParcelableExtra("device");
         if (this.device != null) {
+            //Set the Activity Title
             if (this.device.getName() != null && this.device.getName().length() > 0) {
                 this.setTitle(this.device.getName());
             }
@@ -92,6 +99,10 @@ public class InspectDeviceActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * BluetoothGattCallback that is used to connect to a remote BLE-Device.
+     * Defines callback-methods that are used for each step in the process of connecting/reading/writing for that device.
+     */
     private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -107,6 +118,7 @@ public class InspectDeviceActivity extends ActionBarActivity {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             //super.onServicesDiscovered(gatt, status);
 
+            //Iterate all services & save the service itself and all of the characteristics included into the adapter
             for (final BluetoothGattService service : gatt.getServices()) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -162,6 +174,9 @@ public class InspectDeviceActivity extends ActionBarActivity {
         */
     };
 
+    /**
+     * Connects to a remote BLE-Device using the predefined BluetoothGattCallback
+     */
     private void connectToBleDevice() {
         if (!this.isConnected) {
             this.bluetoothGatt = this.device.connectGatt(this, false, this.gattCallback);
@@ -169,6 +184,9 @@ public class InspectDeviceActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Disconnects from a remote BLE-Device
+     */
     private void disconnectFromBleDevice() {
         if (this.isConnected && this.bluetoothGatt != null) {
             this.bluetoothGatt.disconnect();

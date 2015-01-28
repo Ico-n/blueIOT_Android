@@ -6,7 +6,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ * Activity with the only UI-Component being a custom SurfaceView that can be drawn onto.
+ */
 public class DrawActivity extends ActionBarActivity {
+    //Custom Surface View that can be drawn onto
     private AccelerationSurfaceView accelerationSurfaceView;
 
     @Override
@@ -31,27 +35,29 @@ public class DrawActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_draw, menu);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_setFadingEnabled:
+                //Enable/Disable the fading-effect
+                this.accelerationSurfaceView.getThread().setFadingEnabled();
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        //Stop the Thread that's drawing continuously on the SurfaceView
+        //Stop the Thread that's drawing continuously onto the SurfaceView
         //--> onSurfaceDestroyed-Callback is already too late to join the Thread
         this.accelerationSurfaceView.getThread().setRunning(false);
     }
