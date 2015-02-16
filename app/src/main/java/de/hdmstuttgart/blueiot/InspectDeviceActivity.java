@@ -79,6 +79,7 @@ public class InspectDeviceActivity extends ActionBarActivity {
     protected void onPause() {
         super.onPause();
 
+        //Clear the ListView and disconnect from the remote device
         this.listAdapter.clear();
         if (this.bluetoothGatt != null && this.isConnected) {
             try {
@@ -91,6 +92,7 @@ public class InspectDeviceActivity extends ActionBarActivity {
     protected void onStop() {
         super.onStop();
 
+        //Clear the ListView and disconnect from the remote device
         this.listAdapter.clear();
         if (this.bluetoothGatt != null && this.isConnected) {
             try {

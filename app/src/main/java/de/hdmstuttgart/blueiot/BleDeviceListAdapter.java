@@ -79,10 +79,14 @@ public class BleDeviceListAdapter extends BaseAdapter {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        //Inflate custom layout resource
         convertView = this.inflater.inflate(R.layout.listitem_device, null);
+
+        //Get References to UI-Components
         TextView textView_Name = (TextView) convertView.findViewById(R.id.device_name);
         TextView textView_Address = (TextView) convertView.findViewById(R.id.device_address);
 
+        //Customize TextViews
         BluetoothDevice device = this.bleDevices.get(position);
         String deviceName = device.getName();
         if (deviceName != null && deviceName.length() > 0 ) {

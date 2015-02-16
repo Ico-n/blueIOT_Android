@@ -245,6 +245,7 @@ public class DetailActivity extends ActionBarActivity {
     };
 
     /*
+    //BluetoothGattCallback that can be used to read a single value from blueIOT once
     public void readOnce(View view) {
         if (this.device != null) {
             BluetoothGattCallback cb = new BluetoothGattCallback() {
@@ -275,7 +276,6 @@ public class DetailActivity extends ActionBarActivity {
                     //super.onCharacteristicRead(gatt, characteristic, status);
 
                     String value = characteristic.getStringValue(0);
-                    Log.d("readOnce", "onCharacteristicRead Value: " + value);
                 }
             };
 
@@ -285,6 +285,7 @@ public class DetailActivity extends ActionBarActivity {
     */
 
     /*
+    //BluetoothGattCallback that can be used to write a value to blueIOT
     public void writeToBlueIOT(View view) {
         if (this.device != null) {
             BluetoothGattCallback cb = new BluetoothGattCallback() {
@@ -316,7 +317,7 @@ public class DetailActivity extends ActionBarActivity {
                 public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
                     //super.onCharacteristicWrite(gatt, characteristic, status);
 
-                    Log.d("WRITETOBLUEIOT", "onCharacteristicWrite: Status: " + status);
+                    //Do something, once the value is written
                 }
             };
 

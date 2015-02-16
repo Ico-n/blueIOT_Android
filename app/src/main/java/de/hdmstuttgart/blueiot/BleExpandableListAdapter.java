@@ -75,7 +75,7 @@ public class BleExpandableListAdapter extends BaseExpandableListAdapter {
      * Allows retrieving a specific BluetoothGattCharacteristic from the adapter (e.g. when the item is being clicked in the ExpandableListView)
      * @param service The parent service that the characteristic belongs to
      * @param characteristicUUID The unique identifier for this characteristic
-     * @return The BluetoothGattCharacteristic associated with the specified UUID
+     * @return The BluetoothGattCharacteristic associated with the specified UUID or null, if none is found
      */
     public BluetoothGattCharacteristic getCharacteristic(BluetoothGattService service, UUID characteristicUUID) {
         if (this.characteristicCollection.containsKey(service)) {

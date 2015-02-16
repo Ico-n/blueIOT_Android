@@ -21,13 +21,13 @@ import android.widget.Toast;
  * The MainActivity is the Activity that is shown when the application is started.
  * It uses a ListView in order to display BluetoothDevices that were found while scanning.
  * Displaying each of the devices as a ListItem (Custom View, see 'res\layout\listitem_device.xml') is done by the associated BleDeviceListAdapter.
- * Apart from the ListView, the ActionBar (see 'res\menu\menu_main.xml') is the main component of this Activity, allowing the user to initiate a Bluetooth-Search
+ * Apart from the ListView, the ActionBar (see 'res\menu\menu_main.xml') is the main component of this Activity, allowing the user to initiate a Bluetooth-Scan
  */
 public class MainActivity extends ActionBarActivity {
     //Custom Adapter for the ListView
     private BleDeviceListAdapter bleDeviceListAdapter;
 
-    //Used for triggering asynchronous events
+    //Used for triggering (asynchronous) events
     private Handler handler;
 
     //Helper fields for Bluetooth-Connectivity
@@ -35,6 +35,7 @@ public class MainActivity extends ActionBarActivity {
     private boolean isBluetoothSupported;
     private boolean isBleSupported;
 
+    //BluetoothAdapter of the device
     private BluetoothAdapter bluetoothAdapter;
 
     //Context Menu IDs
@@ -131,7 +132,7 @@ public class MainActivity extends ActionBarActivity {
                         }
                         else {
                             //Show a Dialog, allowing the User to turn Bluetooth ON
-                            //Start scanning for BLE-Devices if the User does turn it on (see onActivityResult)
+                            //Start scanning for BLE-Devices if the User does turn it on (see onActivityResult())
                             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                             this.startActivityForResult(enableBtIntent, 1337);
                         }
@@ -278,6 +279,7 @@ public class MainActivity extends ActionBarActivity {
 
     /**
      * Initiates/Terminates a Scan for BluetoothDevices with the previously defined LeScanCallback
+     * For higher API-Levels, don't use the deprecated methods
      * @param enable Indicates whether to start|stop the Scan-Process
      */
     private void scanLeDevice(final boolean enable) {

@@ -11,7 +11,7 @@
     <string name="action_detailActivity_stopDrawing">Stop Drawing</string>
     <string name="action_detailActivity_clearData">Clear Data</string>
     <string name="title_activity_draw">Balance</string>
-    <string name="title_activity_inspect_device">InspectDeviceActivity</string>
+    <string name="title_activity_inspect_device">Inspect Device</string>
     <string name="BluetoothGattCharacteristic.PERMISSION_READ.Description">Read</string>
     <string name="BluetoothGattCharacteristic.PERMISSION_READ_ENCRYPTED.Description">Encrypted Read</string>
     <string name="BluetoothGattCharacteristic.PERMISSION_READ_ENCRYPTED_MITM.Description">Read with man-in-the-middle protection</string>
