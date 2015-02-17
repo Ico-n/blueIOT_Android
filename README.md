@@ -52,8 +52,36 @@ Make sure to adjust these values for your specific blueIOT-device, otherwise you
 
 ### Discovering Devices ###
 
+Start discovering remote BLE-Devices by clicking on the button in the ActionBar.
+
+//TODO: Screenshot
+
+This will initiate a BLE-Scan (5 second duration only, because it is battery-intensive) for remote devices. Internally, a scan-method is called on the BluetoothManager-Object with a predefined ScanCallback (handling actions to be done for each device that is detected), as shown below:
+
+```
+#!java
+//Stops scanning after a defined scan period
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    bluetoothAdapter.stopLeScan(leScanCallback);
+                }
+            }, 5000);
+```
+
+
+Any device that is found during the scan, will be added into the ListView as a separate ListItem, that will then be used for further actions.
+
 ### Displaying data in a Line Chart ###
 
+In order to see the sensor values from the accelerometer in a line chart, simply tap onto your blueIOT-device, that - after a successful scan - should appear as a ListItem in the ListView.
+
+Note: only blueIOT allowed as of yet
+
+//TODO: Screenshot
+
 ### Scanning a Device ###
+
+//TODO: Screenshot
 
 ### Balancing the ball ###
