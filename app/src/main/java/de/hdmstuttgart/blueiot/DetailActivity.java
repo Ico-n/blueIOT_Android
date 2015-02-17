@@ -146,16 +146,16 @@ public class DetailActivity extends ActionBarActivity {
             //super.onServicesDiscovered(gatt, status);
 
             //Find the correct Service on blueIOT
-            BluetoothGattService gattService = gatt.getService(UUID.fromString("06CCE3A0-AF8C-11E3-A5E2-0800200C9A66"));
+            BluetoothGattService gattService = gatt.getService(UUID.fromString(BlueIOTHelper.BLUEIOT_PRIMARY_SERVICE_UUID));
             if (gattService != null) {
                 //Find the correct Characteristic where we can set a notification for ourselves
-                BluetoothGattCharacteristic characteristic = gattService.getCharacteristic(UUID.fromString("06CCE3A2-AF8C-11E3-A5E2-0800200C9A66"));
+                BluetoothGattCharacteristic characteristic = gattService.getCharacteristic(UUID.fromString(BlueIOTHelper.BLUEIOT_CHARACTERISTIC_NOTIFICATION_UUID));
                 if (characteristic != null) {
                     //Enable local notifications (i.e. Android-Application)
                     gatt.setCharacteristicNotification(characteristic, true);
 
                     //Enable remote notifications on the BLE-Server (i.e. blueIOT)
-                    BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"));
+                    BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(BlueIOTHelper.BLUEIOT_DESCRIPTOR_NOTIFICATION_UUID));
                     if (descriptor != null) {
                         descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                         gatt.writeDescriptor(descriptor);

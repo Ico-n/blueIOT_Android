@@ -82,7 +82,7 @@ public class MainActivity extends ActionBarActivity {
 
                 BluetoothDevice device = bleDeviceListAdapter.getDevice(position);
                 if (device != null) {
-                    if ((device.getName() != null && device.getName().contains("iBeacon")) || device.getAddress().equals("00:07:80:7F:A6:E0")) {
+                    if ((device.getName() != null && device.getName().contains(BlueIOTHelper.BLUEIOT_DEVICE_NAME)) || device.getAddress().equals(BlueIOTHelper.BLUEIOT_DEVICE_ADDRESS)) {
                         //Pass over the BluetoothDevice to the new Activity using the Intent
                         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
                         intent.putExtra("device", device);
@@ -229,7 +229,7 @@ public class MainActivity extends ActionBarActivity {
                 BluetoothDevice device = this.bleDeviceListAdapter.getDevice(acmi.position);
                 if (device != null) {
                     //Allow blueIOT ONLY!
-                    if ((device.getName() != null && device.getName().contains("iBeacon")) || device.getAddress().equals("00:07:80:7F:A6:E0")) {
+                    if ((device.getName() != null && device.getName().contains(BlueIOTHelper.BLUEIOT_DEVICE_NAME)) || device.getAddress().equals(BlueIOTHelper.BLUEIOT_DEVICE_ADDRESS)) {
                         //Start new Activity to start drawing
                         Intent intent = new Intent(this, DrawActivity.class);
                         intent.putExtra("device", device);
