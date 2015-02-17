@@ -54,8 +54,6 @@ Make sure to adjust these values for your specific blueIOT-device, otherwise you
 
 Start discovering remote BLE-Devices by clicking on the button in the ActionBar.
 
-//TODO: Screenshot
-
 This will initiate a BLE-Scan (5 second duration only, because it is battery-intensive) for remote devices. Internally, a scan-method is called on the BluetoothManager-Object with a predefined ScanCallback (handling actions to be done for each device that is detected), as shown below:
 
 ```
@@ -76,12 +74,48 @@ Any device that is found during the scan, will be added into the ListView as a s
 
 In order to see the sensor values from the accelerometer in a line chart, simply tap onto your blueIOT-device, that - after a successful scan - should appear as a ListItem in the ListView.
 
-Note: only blueIOT allowed as of yet
+**Note:** The current implementation of the app does not allow any other devices (i.e. other device names or different hardware adresses) to be handled by a normal click. This is because the implemenation (of blueIOT) is device-specific and requires, for instance, that the transmitted data has a payload of 20 Bytes and is of type "String" that contains comma-separated values.
 
-//TODO: Screenshot
+The new activity then displays the graph and a legend, with a description for each of the individual series in the graph. It then populates and draws the new values that it receives from blueIOT dynamically. This is done by registering the app for any changes in blueIOT's BLE-characteristic for the accelerometer values. BlueIOT will then continuously push the new values into the app, where they can be processed. This is the section in the code for registering for the changing values:
+
+```
+#!java
+        @Override
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            BluetoothGattService gattService = gatt.getService(UUID.fromString(BlueIOTHelper.BLUEIOT_PRIMARY_SERVICE_UUID));
+            if (gattService != null) {
+                BluetoothGattCharacteristic characteristic = gattService.getCharacteristic(UUID.fromString(BlueIOTHelper.BLUEIOT_CHARACTERISTIC_NOTIFICATION_UUID));
+                if (characteristic != null) {
+                    //Enable local notifications (i.e. Android-Application)
+                    gatt.setCharacteristicNotification(characteristic, true);
+
+                    //Enable remote notifications on the BLE-Server (i.e. blueIOT)
+                    BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(BlueIOTHelper.BLUEIOT_DESCRIPTOR_NOTIFICATION_UUID));
+                    if (descriptor != null) {
+                        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                        gatt.writeDescriptor(descriptor);
+
+                        /*
+                         *   After both types of notifications have been set, the BLE-Remote-Device will continuously push new values
+                         *   into the Android-App. These push notifications will be dealt with inside regular calls to onCharacteristicChanged()
+                         */
+                    }
+                }
+            }
+        }
+```
+
+
+The ActionBar in this Activity lets you clear / reset the data, as well as stopping / resuming the connection to blueIOT.
 
 ### Scanning a Device ###
 
-//TODO: Screenshot
+When trying to scan a device for all of its services and characteristics, long-click a Bluetooth device in the MainActivity to bring up the context menu.
+
+Clicking "Inspect device" will then populate all of the discovered services and nested characteristics in a new screen. This might be helpful for cases, where you would need to find out what exactly you can do with a remote device and what not.
 
 ### Balancing the ball ###
+
+You can start balancing the ball in your app by long-clicking a Bluetooth device in the MainActivity and clicking "Balance Ball" in the context menu.
+
+This will start a new activity that moves a ball depending on how you move blueIOT around. This feature does however only use 2 values from the accelerometer because it maps them to a 2-D screen.
