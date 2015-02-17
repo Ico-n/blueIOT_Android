@@ -1,6 +1,6 @@
 # Android Application for blueIOT #
 
-### Description ###
+## Description ##
 
 The blueIOT Android (4.4.2) application is used together with the blueIOT device ("Platinchen") from [Fab-Lab](http://www.fab-lab.eu/blueiot/). The app was developed with the intent to use blueIOT as a smartwatch prototype, using data from various sensors (e.g. Accelerometer, UV-Sensor or Barometer) and make use of this data on your smartphone.
 
@@ -10,11 +10,50 @@ The app communicates with blueIOT using the Bluetooth-Low-Energy (BLE) standard 
 
 The acceleration values (X, Y and Z-axis, as well as the height value) can be displayed in a line chart (we're using [GraphView](http://www.android-graphview.org/) to get this done) or visualized by a moving ball on the screen by moving blueIOT around accordingly. Furthermore, the application allows detecting and scanning remote BLE-devices and displays all of their offered services and characteristics within the application. (It might be helpful to have a thorough look into the [Android Bluetooth-Low-Energy API](https://developer.android.com/guide/topics/connectivity/bluetooth-le.html) in order to see how communication to a remote BLE-device can be achieved)
 
-### Setup / Configuration ###
+## Setup / Configuration ##
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+In order to get this project running, you will need the [Android Studio IDE](http://developer.android.com/sdk/index.html) which uses the gradle build automation system. Make sure, that the dependencies for the AppCompat-Library and the GraphView in the build-file are inserted correctly:
+
+```
+#!java
+compile 'com.android.support:appcompat-v7:21.0.2'
+compile 'com.jjoe64:graphview:4.0.0'
+```
+
+Also, you will need an Android device that
+
+* Runs on KitKat (4.4) or higher
+* Supports the Bluetooth-Low-Energy standard
+
+**Note:** The Android emulator itself does not support BLE. Thus, you will need a real device.
+
+In addition to these requisites, you must configure the *BlueIOTHelper*-Class to return the correct values for your specific blueIOT-device. An example configuration could look like this:
+
+
+```
+#!java
+public class BlueIOTHelper {
+    public static final String BLUEIOT_DEVICE_NAME = "iBeacon";
+    public static final String BLUEIOT_DEVICE_ADDRESS = "00:07:80:7F:A6:E0";
+    public static final String BLUEIOT_PRIMARY_SERVICE_UUID = "06CCE3A0-AF8C-11E3-A5E2-0800200C9A66";
+    public static final String BLUEIOT_CHARACTERISTIC_NOTIFICATION_UUID = "06CCE3A2-AF8C-11E3-A5E2-0800200C9A66";
+    public static final String BLUEIOT_DESCRIPTOR_NOTIFICATION_UUID = "00002902-0000-1000-8000-00805f9b34fb";
+}
+```
+
+Make sure to adjust these values for your specific blueIOT-device, otherwise you won't be able to see anything because these values will be used later in the process of communicating with blueIOT.
+
+## Getting Started ##
+
+1. Discover remote BLE-devices
+2. Display sensor data in line chart
+3. Scan BLE-device for services and characteristics
+4. Visualize sensor data by balancing the ball
+
+### Discovering Devices ###
+
+### Displaying data in a Line Chart ###
+
+### Scanning a Device ###
+
+### Balancing the ball ###
