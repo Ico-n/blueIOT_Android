@@ -15,7 +15,6 @@ The acceleration values (X, Y and Z-axis, as well as the height value) can be di
 In order to get this project running, you will need the [Android Studio IDE](http://developer.android.com/sdk/index.html) which uses the gradle build automation system. Make sure, that the dependencies for the AppCompat-Library and the GraphView in the build-file are inserted correctly:
 
 ```
-#!java
 compile 'com.android.support:appcompat-v7:21.0.2'
 compile 'com.jjoe64:graphview:4.0.0'
 ```
@@ -31,7 +30,6 @@ In addition to these requisites, you must configure the *BlueIOTHelper*-Class to
 
 
 ```
-#!java
 public class BlueIOTHelper {
     public static final String BLUEIOT_DEVICE_NAME = "iBeacon";
     public static final String BLUEIOT_DEVICE_ADDRESS = "00:07:80:7F:A6:E0";
@@ -57,7 +55,6 @@ Start discovering remote BLE-Devices by clicking on the button in the ActionBar.
 This will initiate a BLE-Scan (5 second duration only, because it is battery-intensive) for remote devices. Internally, a scan-method is called on the BluetoothManager-Object with a predefined ScanCallback (handling actions to be done for each device that is detected), as shown below:
 
 ```
-#!java
 //Stops scanning after a defined scan period
             handler.postDelayed(new Runnable() {
                 @Override
@@ -79,7 +76,6 @@ In order to see the sensor values from the accelerometer in a line chart, simply
 The new activity then displays the graph and a legend, with a description for each of the individual series in the graph. It then populates and draws the new values that it receives from blueIOT dynamically. This is done by registering the app for any changes in blueIOT's BLE-characteristic for the accelerometer values. BlueIOT will then continuously push the new values into the app, where they can be processed. This is the section in the code for registering for the changing values:
 
 ```
-#!java
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             BluetoothGattService gattService = gatt.getService(UUID.fromString(BlueIOTHelper.BLUEIOT_PRIMARY_SERVICE_UUID));
