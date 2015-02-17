@@ -1,5 +1,8 @@
 package de.hdmstuttgart.blueiot;
 
+/**
+ * Helper class that provides static references for the specific blueIOT-Device that is being used
+ */
 public class BlueIOTHelper {
     public static final String BLUEIOT_DEVICE_NAME = "iBeacon";
     public static final String BLUEIOT_DEVICE_ADDRESS = "00:07:80:7F:A6:E0";
